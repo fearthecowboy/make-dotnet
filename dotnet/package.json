@@ -1,0 +1,48 @@
+{
+  "basename": "dotnet",
+  "name": "dotnet",
+  "version": "1.4.0",
+  "description": "Platform agnostic installation of .NET Core SDK/Runtime $VERSION",
+  "engines": {
+    "node": ">=6.4.0"
+  },
+  "main": "./dist/call.js",
+  "typings": "./dist/main.d.ts",
+  "scripts": {
+    "_publish-preview": "npm install && npm run publish-both",
+    "build": "tsc && static-link && pwsh build.ps1",
+    "_pack-both": "tsc && static-link --force && pwsh build.ps1 && cd ./runtime && npm pack && cd .. && cd ./sdk && npm pack ",
+    "_publish-both": "tsc && static-link --force && pwsh build.ps1 && cd ./runtime && npm publish --tag preview && cd .. && cd ./sdk && npm publish --tag preview ",
+    "prepublishOnly": " node -e \"throw new Error('DONT PUBLISH THIS HERE. USE npm run publish-preview.')\"",
+    "static-link": "static-link",
+    "reinstall": "rm -rf node_modules && touch package-lock.json && rm package-lock.json && touch yarn.lock && rm yarn.lock && npm install && static-link --debug --force"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fearthecowboy/dotnet.git"
+  },
+  "keywords": [
+    "dotnet",
+    ".NET",
+    "core",
+    "$SDKORRUNTIME",
+    "$VERSION",
+    "install"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^8.0.22",
+    "static-link": "^0.2.3",
+    "typescript": "^3.1"
+  },
+  "static-link": {
+    "entrypoints": [
+      "./dist/app.js"
+    ],
+    "dependencies": {
+      "yarn": "^1.1.0",
+      "rimraf": "2.6.2",
+      "mkdirp": "0.5.1"
+    }
+  }
+}

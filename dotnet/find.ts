@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+import { packageJsonPath, installationPath, dotnetPackageName, basename } from './common'
+// don't go for global installed stuff.
+process.env["DOTNET_MULTILEVEL_LOOKUP"] = "0";
+const pkg = require("../package.json");
+const version = pkg['dotnet-version'];
+
+const verbose = process.env.DEBUG; 
+const debug = verbose ? console.error:(message?: any, ...optionalParams: any[])=>{};
+const skipSDK =  process.env.NO_NET_SDK || basename !== 'dotnet' 
+
+// if this is the .net runtime, try the SDK command first (if it's local).
+skipSDK ? tryDotNet() :tryDotNetSDK();
+ 
+function tryDotNetSDK() {
+  debug("Trying local dotnet sdk.");
+  try { require(`dotnet-sdk-${version}/dist/find.js`); } catch { tryDotNet(); }
+}
+
+function tryDotNet() {
+  // try local node_modules 
+  debug(`Trying local dotnet package: ${dotnetPackageName}`);
+  try { require(`${dotnetPackageName}/find.js`); } catch { 
+    // run the dotnet package
+    debug(`Trying user dotnet package: ${installationPath}`);
+    try { require(`${installationPath}/find.js`);  } catch {
+      // inline install and try again
+      debug(`Installing dotnet package: ${installationPath}`);
+      require("child_process").spawn(process.execPath, [`${__dirname}/app.js`,"--force"],{stdio:verbose ? [process.stdin, process.stderr, process.stderr]: 'ignore'}).
+        on("exit",(code:number,signal:string)=> code == 0 ? require(`${installationPath}/find.js`):process.exit(<any>console.error("Unable to install/use dotnet framework.")||code));
+    }
+  }
+}
