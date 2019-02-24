@@ -111,7 +111,7 @@ $versions |% {
   }
 }
 
-push "$PSScriptRoot/dotnet"
+pushd "$PSScriptRoot/dotnet"
 npm run build
 popd 
 

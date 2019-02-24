@@ -21,7 +21,8 @@ return @"
     "dotnet-$SDKORRUN": "./dist/call.js",
     "dotnet-$SDKORRUN-$($pkgver)": "./dist/call.js",
     "install-dotnet-$SDKORRUNTIME": "./dist/app.js",
-    "find-dotnet-$SDKORRUNTIME": "./dist/find.js"
+    "which-dotnet-$SDKORRUNTIME": "./dist/find.js",
+    "which-dotnet": "./dist/find.js"
   },
   "scripts": {
     "postinstall": "node -e \"/*PostInstall: Installs platform-specific .NET framework */try{require('./dist/app.js')}catch(e){}\""
@@ -62,8 +63,9 @@ $versions |% {
   copy-item ./.npmignore "./dotnet-sdk-${pkgver}/.npmignore"
 
   $README = get-content -raw ./readme.md
-
   set-content "./dotnet-${pkgver}/readme.md" ($README -replace "{flavor}","-"  -replace "{sdkorruntime}","runtime" -replace "{version}",$pkgver  )
+  
+  $README = get-content -raw ./readme.md
   set-content "./dotnet-sdk-${pkgver}/readme.md" ($README -replace "{flavor}","-sdk-"  -replace "{sdkorruntime}","sdk" -replace "{version}",$pkgver )
   
   pushd "$PSScriptRoot/dotnet-${pkgver}"
