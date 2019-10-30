@@ -1,3 +1,1 @@
-updated
-to
-dotnet-3.0.preview3
+updated to dotnet-3.0 release
