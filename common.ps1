@@ -7,4 +7,4 @@ $zip_variants = @('win-x64', 'win-ia32' )
 
 $variants = $gz_variants + $zip_variants
 $patch = 1000+ (git rev-list --parents HEAD --count --full-history $PSScriptRoot)
-$versions =  @('2.1', '2.2', '3.0')
+$versions =  @('2.1', '2.2', '3.0', '3.1')
